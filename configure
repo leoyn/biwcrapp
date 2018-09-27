@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mkdir dependencies
+git --version
+
+cd dependencies
+git clone https://github.com/leethomason/tinyxml2
+cd tinyxml2
+make
+
+if [ "$EUID" -ne 0 ]
+then echo "Please run as root or do a make install of dependencies"
+	exit
+fi
+
+make install
+apt-get install libjsoncpp-dev
