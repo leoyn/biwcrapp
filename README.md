@@ -1,4 +1,5 @@
-# BIWCRAPP
+
+![cc0](https://licensebuttons.net/p/zero/1.0/80x15.png) No rights reserved
 
 Diese Repo soll es erm&ouml;glichen Informationen &uuml;ber lokale Warnmeldungen etc. ohne der BIWAPP abrufen zu k&ouml;nnen.
 
@@ -18,7 +19,7 @@ location={insertLocationHere}
 curl -H "Content-Type: application/x-www-form-urlencoded" --data "location=$location" "https://www.biwapp.de/widget/dataBiwappProxy"
 ```
 
-#Landkreise und Regionen
+# Landkreise und Regionen
 
 | Abk&uuml;rzung| |
 |--------------|--------------|
@@ -70,8 +71,3 @@ curl -H "Content-Type: application/x-www-form-urlencoded" --data "location=$loca
 make
 ```
 
-## Lizenz und Verwendung
-
-This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.
-
-![CC BY NC](https://licensebuttons.net/l/by-nc/4.0/88x31.png)
