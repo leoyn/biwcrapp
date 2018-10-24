@@ -1,5 +1,4 @@
 
-![cc0](https://licensebuttons.net/p/zero/1.0/80x15.png) No rights reserved
 
 Diese Repo soll es erm&ouml;glichen Informationen &uuml;ber lokale Warnmeldungen etc. ohne der BIWAPP abrufen zu k&ouml;nnen.
 
@@ -64,7 +63,7 @@ curl -H "Content-Type: application/x-www-form-urlencoded" --data "location=$loca
 
 -----
 
-## Installation der tools
+## Installation der Tools
 
 ```
 ./configure
