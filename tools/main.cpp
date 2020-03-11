@@ -5,12 +5,12 @@
 #include <fstream>
 
 #include <curl/curl.h>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 #include <tinyxml2.h>
 
 // Please configure me
-const std::string feedUrl = "/feed/";
-const std::string domain = "{domain}";
+const std::string feedUrl = "/feeds/";
+const std::string domain = "example.com";
 const std::string feedPath = "../feeds/";
 const std::string regionsFilePath = "../regions.json";
 
@@ -21,7 +21,7 @@ struct Region {
 };
 
 struct Response {
-    int status;
+    long status;
     Region region;
     std::string body;
 };
@@ -40,31 +40,33 @@ static size_t write_data(void *contents, size_t size, size_t nmemb, void *userp)
 Response fetchContentForRegion(Region region) {
     Response response;
     std::string readBuffer;
-    char bodyStream[50];
+    char params[50];
 
     response.status = 0;
 
 
     CURL *curl = curl_easy_init();
 
-    sprintf(bodyStream, "location=%s", curl_easy_escape(curl, region.abbreviation.c_str(), strlen(region.abbreviation.c_str())));
+    sprintf(params, "location=%s", curl_easy_escape(curl, region.abbreviation.c_str(), strlen(region.abbreviation.c_str())));
+
+    std::stringstream url;
+    url << "https://www.biwapp.de/widget/dataBiwappProxy" << "?" << params;
 
     if(curl) {
         struct curl_slist *headers = NULL;
-        headers = curl_slist_append(headers, "User-Agent: Blast");
-        headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+        headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:73.0) Gecko/20100101 Firefox/73.0");
+        headers = curl_slist_append(headers, "Accept: */*");
 
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        curl_easy_setopt(curl, CURLOPT_URL, "https://www.biwapp.de/widget/dataBiwappProxy");
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5);
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, bodyStream);
+        curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_data);
         CURLcode res = curl_easy_perform(curl);
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response.status);
         curl_easy_cleanup(curl);
 
         response.body = readBuffer;
-        response.status = 1;
     }
 
     return response;
@@ -91,7 +93,7 @@ void generateFeed(Region region) {
     Json::Value jsonNews = jsonRoot["news"];
 
     std::stringstream filename;
-    filename << feedPath << region.abbreviation << ".xml"; 
+    filename << feedPath << region.abbreviation << ".xml";
 
     tinyxml2::XMLDocument xmlDocument;
     tinyxml2::XMLDeclaration *declaration = xmlDocument.NewDeclaration("xml version=\"1.0\" encoding=\"utf-8\"");
@@ -130,7 +132,7 @@ void generateFeed(Region region) {
 
     for(int i = 0; i < jsonNews.size(); i++) {
         tinyxml2::XMLElement *xmlEntry = xmlDocument.NewElement("entry");
-        
+
         tinyxml2::XMLElement *xmlEntryId = xmlDocument.NewElement("id");
         std::stringstream idStream;
         int id = jsonNews[i].get("id", "").asInt();
@@ -178,10 +180,8 @@ void generateFeed(Region region) {
 
 void generateAllFeeds() {
     Json::Value jsonRoot;
-    std::stringstream regionsFilePathStream;
-    regionsFilePathStream << feedPath << regionsFilePath;
 
-    std::ifstream regionsFile(regionsFilePathStream.str().c_str(), std::ifstream::binary);
+    std::ifstream regionsFile(regionsFilePath, std::ifstream::binary);
     regionsFile >> jsonRoot;
 
     std::future<void> f[jsonRoot.size()];

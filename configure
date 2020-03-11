@@ -14,4 +14,4 @@ then echo "Please run as root or do a make install of dependencies"
 fi
 
 make install
-apt-get install libjsoncpp-dev
+apt-get install libjsoncpp-dev libcurl4-openssl-dev -y
