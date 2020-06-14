@@ -11,7 +11,7 @@ Diese Repo soll es erm&ouml;glichen Informationen &uuml;ber lokale Warnmeldungen
 
 ## Zugriff mit curl
 
-Eine Liste aller Lokationen sind [hier](#Landkreise%20und%20Regionen) zu finden.
+Eine Liste aller Lokationen sind [hier](#Landkreise-und-Regionen) zu finden.
 
 ```
 location={insertLocationHere}
